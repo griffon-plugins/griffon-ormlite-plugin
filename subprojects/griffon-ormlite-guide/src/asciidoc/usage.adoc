@@ -1,0 +1,237 @@
+
+[[_Usage]]
+= Usage
+
+The following sections describe how you may use this plugin in an project.
+
+== Configuration
+
+You must create a configuration file named `Ormlite` that holds the settings for creating instances of `{link_connection_source}`.
+This file follows the same standard configuration mechanism as the application's `Config` file, which means you can define the
+configuration using
+
+ * a properties file
+ * a Java file
+ * a Groovy script
+
+The following example shows the default settings needed to connect the default database taking into account that each
+environment may connect to a different database.
+
+[source,groovy,options="nowrap"]
+.src/main/resources/Ormlite.groovy
+----
+include::{path_griffon_ormlite_core}/src/test/resources/Ormlite.groovy[lines=16..37]
+----
+
+You may configure multiple named databases (the default factory is aptly named `default`) as the following snippet
+shows
+
+[source,groovy,options="nowrap"]
+.src/main/resources/Ormlite.groovy
+----
+include::{path_griffon_ormlite_core}/src/test/resources/Ormlite.groovy[lines=39..50]
+----
+
+The following properties are optional
+
+[cols="4*",options="header"]
+|===
+
+| Property           | Type    | Default | Description
+| connect_on_startup | boolean | false   | Establishes a connection to the database at the beginning of the `Startup` phase.
+| jmx                | boolean | true    | Expose sessions using JMX.
+
+|===
+
+The plugin's <<_modules, module>> registers a `{api_connection_source_handler}` helper class that defines the base contract
+for accessing a database and issue SQL queries to it. This class has the following methods
+
+[source,java,options="nowrap"]
+.griffon.plugins.ormlite.ConnectionSourceHandler.java
+----
+include::{path_griffon_ormlite_core}/src/main/java//griffon/plugins/ormlite/ConnectionSourceHandler.java[tags=methods,indent=0]
+----
+
+These method are aware of multiple databases. If no databaseName is specified when calling them then the default
+database will be selected. You can inject an instance of this class anywhere it's needed using `@Inject`. There is one
+callback you may use with this method: `{api_connection_source_callback}`.
+
+This callback is defined using a functional interface approach, which means you can apply lambda expressions if running
+with JDK8+ or closures if running Groovy.
+
+[source,java,options="nowrap"]
+.griffon.plugins.ormlite.ConnectionSourceCallback.java
+----
+include::{path_griffon_ormlite_core}/src/main/java/griffon/plugins/ormlite/ConnectionSourceCallback.java[lines=26..-1]
+----
+
+=== Bootstrap
+
+You may execute arbitrary database calls during connection and disconnection from a `{link_connection_source}`. Simply
+create a class that implements the `{api_ormlite_bootstrap}` interface and register it within a module, for example
+
+[source,java,options="nowrap"]
+.src/main/java/com/acme/SampleOrmliteBootstrap.java
+----
+package com.acme;
+
+import griffon.plugins.ormlite.OrmliteBootstrap;
+import com.j256.ormlite.support.ConnectionSource;
+
+import javax.annotation.Nonnull;
+import javax.inject.Named;
+
+@Named("sample")
+public class SampleOrmliteBootstrap implements OrmliteBootstrap {
+    @Override
+    public void init(@Nonnull String databaseName, @Nonnull ConnectionSource connectionSource) {
+        // operations after first connection to database
+    }
+
+    @Override
+    public void destroy(@Nonnull String databaseName, @Nonnull ConnectionSource connectionSource) {
+        // operations before disconnecting from the database
+    }
+}
+----
+
+[source,java,options="nowrap"]
+.src/main/java/com/acme/ApplicationModule.java
+----
+package com.acme;
+
+import griffon.plugins.ormlite.OrmliteBootstrap;
+import griffon.core.injection.Module;
+import org.codehaus.griffon.runtime.core.injection.AbstractModule;
+import org.kordamp.jipsy.ServiceProviderFor;
+
+@ServiceProviderFor(Module.class)
+public class ApplicationModule extends AbstractModule {
+    @Override
+    protected void doConfigure() {
+        bind(OrmliteBootstrap.class)
+            .to(SampleOrmliteBootstrap.class)
+            .asSingleton();
+    }
+}
+----
+
+== Example
+
+The following is a trivial usage of the `{api_connection_source_handler}` inside a Java service
+
+[source,java,options="nowrap"]
+.com.acme.SampleService.java
+----
+package com.acme;
+
+import griffon.core.artifact.GriffonService;
+import griffon.metadata.ArtifactProviderFor;
+import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonService;
+
+import griffon.plugins.ormlite.ConnectionSourceHandler;
+import griffon.plugins.ormlite.ConnectionSourceCallback;
+import griffon.plugins.ormlite.exceptions.RuntimeSQLException;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
+@ArtifactProviderFor(GriffonService.class)
+public class SampleService extends AbstractGriffonService {
+    @Inject
+    private ConnectionSourceHandler connectionSourceHandler;
+
+    public String getPersonName(final int id) {
+         return connectionSourceHandler.withConnectionSource(new ConnectionSourceCallback<String>() {
+             public String handle(@Nonnull String databaseName, @Nonnull ConnectionSource connectionSource)
+                 throws RuntimeSQLException {
+                 Dao<Person, Integer> peopleDao = DaoManager.createDao(connectionSource, Person.class);
+                 Person person = peopleDao.queryForId(id);
+                 return person != null ? person.getName() : null;
+         });
+    }
+}
+----
+
+Here's the Groovy version of it
+
+[source,groovy,options="nowrap"]
+.com.acme.SampleService.groovy
+----
+package com.acme
+
+import griffon.core.artifact.GriffonService
+import griffon.metadata.ArtifactProviderFor
+
+import griffon.plugins.ormlite.ConnectionSourceHandler
+import com.j256.ormlite.support.ConnectionSource
+import com.j256.ormlite.dao.Dao
+import com.j256.ormlite.dao.DaoManager
+
+import javax.inject.Inject
+
+@ArtifactProviderFor(GriffonService)
+class SampleService {
+    @Inject
+    private ConnectionSourceHandler connectionSourceHandler
+
+    String getPersonName(int id) {
+         connectionSourceHandler.withConnectionSource { String databaseName, ConnectionSource connectionSource ->
+             Dao<Person, Integer> peopleDao = DaoManager.createDao(connectionSource, Person)
+             peopleDao.queryForId(id)?.name ?: null
+         }
+    }
+}
+----
+
+== Events
+
+The following events will be triggered by `{api_connection_source_handler}`
+
+OrmliteConnectStart(String databaseName, Map<String, Object> config):: Triggered before connecting to the database.
+OrmliteConnectEnd(String databaseName, Map<String, Object> config, ConnectionSource connectionSource):: Triggered after connecting to the database.
+OrmliteDisconnectStart(String databaseName, Map<String, Object> config, ConnectionSource connectionSource):: Triggered before disconnecting from the database.
+OrmliteDisconnectEnd(String databaseName, Map<String, Object> config):: Triggered after disconnecting from the database.
+
+NOTE: DataSource events may be triggered during connection and disconnection from a `{link_connection_source}`.
+
+== AST Transformation
+
+You can apply the `{api_connection_source_aware}` AST transformation on any class. This injects the behavior of `{api_connection_source_handler}`
+into said class. The previous Groovy service example can be rewritten as follows
+
+[source,groovy,options="nowrap"]
+.com.acme.SampleService.groovy
+----
+package com.acme
+
+import griffon.core.artifact.GriffonService
+import griffon.metadata.ArtifactProviderFor
+import griffon.transform.ConnectionSourceAware
+
+import com.j256.ormlite.support.ConnectionSource
+import com.j256.ormlite.dao.Dao
+import com.j256.ormlite.dao.DaoManager
+
+@ConnectionSourceAware
+@ArtifactProviderFor(GriffonService)
+class SampleService {
+    String getPersonName(int id) {
+         withConnectionSource { String databaseName, ConnectionSource connectionSource ->
+             Dao<Person, Integer> peopleDao = DaoManager.createDao(connectionSource, Person)
+             peopleDao.queryForId(id)?.name ?: null
+         }
+    }
+}
+----
+
+== DSL Descriptors
+
+This plugin provides DSL descriptors for Intellij IDEA and Eclipse (provided you have the Groovy Eclipse plugin installed).
+These descriptors are found inside the `griffon-ormlite-groovy-compile-{project-version}.jar`, with locations
+
+ * dsdl/griffon_ormlite.dsld
+ * gdsl/griffon_ormlite.gdsl

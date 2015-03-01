@@ -1,0 +1,10 @@
+
+:link_connection_source: link:http://ormlite.com/javadoc/ormlite-core/com/j256/ormlite/support/ConnectionSource.html[ConnectionSource, window="_blank"]
+:api_connection_source_handler: link:api/griffon/plugins/ormlite/ConnectionSourceHandler.html[ConnectionSourceHandler, window="_blank"]
+:api_connection_source_callback: link:api/griffon/plugins/ormlite/ConnectionSourceCallback.html[ConnectionSourceCallback, window="_blank"]
+:api_connection_source_aware: link:api/griffon/transform/ConnectionSourceAware.html[@ConnectionSourceAware, window="_blank"]
+:api_ormlite_bootstrap: link:api/griffon/plugins/ormlite/OrmliteBootstrap.html[OrmliteBootstrap, window="_blank"]
+
+:path_griffon_ormlite_core: {rootdir}/subprojects/griffon-ormlite-core
+:path_griffon_ormlite_groovy_compile: {rootdir}/subprojects/griffon-ormlite-groovy-compile
+
