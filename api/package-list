@@ -1,0 +1,5 @@
+griffon.plugins.ormlite
+griffon.plugins.ormlite.exceptions
+griffon.transform
+org.codehaus.griffon.runtime.jmx
+org.codehaus.griffon.runtime.ormlite
