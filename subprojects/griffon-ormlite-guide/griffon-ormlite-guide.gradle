@@ -6,7 +6,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.2'
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
         classpath 'com.bmuschko:gradle-java2html-plugin:2.0'
     }
 }
@@ -44,39 +44,39 @@ task copyDocs(type: Copy) {
 }
 
 task apiDocs(type: Javadoc, dependsOn: copyDocs) {
-    source          = copyDocs.destinationDir
-    destinationDir  = file("${buildDir}/api")
-    title           = "${pluginBaseName} ${project.version}"
-    classpath       = project.ext.childProjects.collect { projectName ->
-                          [project(projectName).sourceSets.main.output,
-                           project(projectName).configurations.compile,
-                           project(projectName).configurations.compileOnly]
-                      }.flatten().sum() as FileCollection
+    source = copyDocs.destinationDir
+    destinationDir = file("${buildDir}/api")
+    title = "${pluginBaseName} ${project.version}"
+    classpath = project.ext.childProjects.collect { projectName ->
+        [project(projectName).sourceSets.main.output,
+         project(projectName).configurations.compile,
+         project(projectName).configurations.compileOnly]
+    }.flatten().sum() as FileCollection
 
     excludes = ['**/*.html', 'META-INF/**', '**/*.groovy']
 
-    options.use         = true
-    options.splitIndex  = true
-    options.encoding    = 'UTF-8'
-    options.author      = true
-    options.version     = true
-    options.source      = project.sourceCompatibility
-    options.overview    = file('src/javadoc/overview.html')
+    options.use = true
+    options.splitIndex = true
+    options.encoding = 'UTF-8'
+    options.author = true
+    options.version = true
+    options.source = project.sourceCompatibility
+    options.overview = file('src/javadoc/overview.html')
     options.windowTitle = "${pluginBaseName} ${project.version}"
-    options.docTitle    = "${pluginBaseName} ${project.version}"
-    options.footer      = project.javadocFooter
-    options.links       = ['http://www.slf4j.org/apidocs/',
-                           'http://junit.org/javadoc/latest/',
-                           'http://docs.oracle.com/javase/7/docs/api/',
-                           'http://jsr-305.googlecode.com/svn/trunk/javadoc/',
-                           'http://atinject.googlecode.com/svn/trunk/javadoc/',
-                           'http://new.griffon-framework.org/guide/latest/api/']
+    options.docTitle = "${pluginBaseName} ${project.version}"
+    options.footer = project.javadocFooter
+    options.links = ['http://www.slf4j.org/apidocs/',
+                     'http://junit.org/javadoc/latest/',
+                     'http://docs.oracle.com/javase/7/docs/api/',
+                     'http://jsr-305.googlecode.com/svn/trunk/javadoc/',
+                     'http://atinject.googlecode.com/svn/trunk/javadoc/',
+                     'http://griffon-framework.org/guide/latest/api/']
 
     doLast { task ->
         copy {
             into task.destinationDir
             from file('src/javadoc/resources/img/griffon.ico'),
-                 file('src/javadoc/resources/css/stylesheet.css')
+                file('src/javadoc/resources/css/stylesheet.css')
         }
         copy {
             into file("${task.destinationDir}/resources")
@@ -92,18 +92,18 @@ task generateJava2html {
 }
 
 task javadocJar(type: Jar, dependsOn: apiDocs) {
-    archiveName    = "${pluginBaseName}-plugin-${version}-javadoc.jar"
+    archiveName = "${pluginBaseName}-plugin-${version}-javadoc.jar"
     destinationDir = "${buildDir}/assemble/jars" as File
     from apiDocs.destinationDir
 }
 
 task sourceHtmlJar(type: Jar, dependsOn: java2html) {
-    archiveName    = "${pluginBaseName}-plugin-${version}-sources-html.jar"
+    archiveName = "${pluginBaseName}-plugin-${version}-sources-html.jar"
     destinationDir = "${buildDir}/assemble/jars" as File
     from java2htmlConvertCode.destDir
 }
 
-task docsJar(dependsOn: [javadocJar, sourceHtmlJar]) { }
+task docsJar(dependsOn: [javadocJar, sourceHtmlJar]) {}
 
 java2html {
     conversion {
@@ -118,11 +118,11 @@ java2html {
     }
 
     overview {
-        windowTitle    = "${pluginBaseName} ${project.version}"
-        docTitle       = "${pluginBaseName} ${project.version}"
+        windowTitle = "${pluginBaseName} ${project.version}"
+        docTitle = "${pluginBaseName} ${project.version}"
         docDescription = "${pluginBaseName} ${project.version}"
-        icon           = file('src/javadoc/resources/img/griffon.ico')
-        stylesheet     = file('src/javadoc/resources/css/stylesheet.css')
+        icon = file('src/javadoc/resources/img/griffon.ico')
+        stylesheet = file('src/javadoc/resources/css/stylesheet.css')
     }
 }
 
@@ -159,8 +159,8 @@ asciidoctor {
 
 task guide(type: Copy, dependsOn: [apiDocs, generateJava2html, asciidoctor]) {
     destinationDir = "${buildDir}/guide" as File
-    from(apiDocs.destinationDir)       { into 'api' }
-    from(java2htmlConvertCode.destDir) { into 'api-src'}
+    from(apiDocs.destinationDir) { into 'api' }
+    from(java2htmlConvertCode.destDir) { into 'api-src' }
     from("${asciidoctor.outputDir}/html5")
 }
 

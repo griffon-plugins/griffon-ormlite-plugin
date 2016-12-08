@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 the original author or authors.
+ * Copyright 2014-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import javax.inject.Inject
-import java.sql.Connection
 
 @Unroll
 class OrmliteSpec extends Specification {
@@ -84,7 +83,7 @@ class OrmliteSpec extends Specification {
         assert !bootstrap.initWitness
 
         when:
-        connectionSourceHandler.withConnectionSource { String sessionFactoryName, ConnectionSource connectionSource ->  }
+        connectionSourceHandler.withConnectionSource { String sessionFactoryName, ConnectionSource connectionSource -> }
 
         then:
         bootstrap.initWitness
@@ -97,7 +96,7 @@ class OrmliteSpec extends Specification {
         assert !bootstrap.destroyWitness
 
         when:
-        connectionSourceHandler.withConnectionSource { String sessionFactoryName, ConnectionSource connectionSource ->  }
+        connectionSourceHandler.withConnectionSource { String sessionFactoryName, ConnectionSource connectionSource -> }
         connectionSourceHandler.closeConnectionSource()
 
         then:
@@ -139,13 +138,13 @@ class OrmliteSpec extends Specification {
         List peopleIn = connectionSourceHandler.withConnectionSource('people') { String databaseName, ConnectionSource connectionSource ->
             TableUtils.createTableIfNotExists(connectionSource, Person)
             Dao<Person, Integer> peopleDao = DaoManager.createDao(connectionSource, Person)
-            [[id: 1, name: 'Danno',     lastname: 'Ferrin'],
-             [id: 2, name: 'Andres',    lastname: 'Almiray'],
-             [id: 3, name: 'James',     lastname: 'Williams'],
+            [[id: 1, name: 'Danno', lastname: 'Ferrin'],
+             [id: 2, name: 'Andres', lastname: 'Almiray'],
+             [id: 3, name: 'James', lastname: 'Williams'],
              [id: 4, name: 'Guillaume', lastname: 'Laforge'],
-             [id: 5, name: 'Jim',       lastname: 'Shingler'],
+             [id: 5, name: 'Jim', lastname: 'Shingler'],
              [id: 6, name: 'Alexander', lastname: 'Klein'],
-             [id: 7, name: 'Rene',      lastname: 'Groeschke']].each { data ->
+             [id: 7, name: 'Rene', lastname: 'Groeschke']].each { data ->
                 Person person = new Person(data)
                 peopleDao.create(person)
             }
