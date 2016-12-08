@@ -21,6 +21,7 @@ import griffon.core.Configuration;
 import griffon.core.GriffonApplication;
 import griffon.core.env.Metadata;
 import griffon.core.injection.Injector;
+import griffon.exceptions.GriffonException;
 import griffon.plugins.monitor.MBeanManager;
 import griffon.plugins.ormlite.ConnectionSourceFactory;
 import griffon.plugins.ormlite.OrmliteBootstrap;
@@ -32,6 +33,7 @@ import org.codehaus.griffon.runtime.jmx.ConnectionSourceMonitor;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -145,11 +147,11 @@ public class DefaultConnectionSourceFactory extends AbstractObjectFactory<Connec
             ((OrmliteBootstrap) o).destroy(name, instance);
         }
 
-        if (instance.isOpen()) {
+        if (instance.isOpen(null)) {
             try {
                 instance.close();
-            } catch (SQLException e) {
-                throw new RuntimeSQLException(name, e);
+            } catch (IOException e) {
+                throw new GriffonException(name, e);
             }
         }
 

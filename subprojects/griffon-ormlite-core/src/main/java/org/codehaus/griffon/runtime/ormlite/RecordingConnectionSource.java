@@ -46,22 +46,22 @@ public class RecordingConnectionSource extends ConnectionSourceDecorator {
     }
 
     @Override
-    public DatabaseConnection getReadOnlyConnection() throws SQLException {
-        DatabaseConnection connection = super.getReadOnlyConnection();
+    public DatabaseConnection getReadOnlyConnection(String tableName) throws SQLException {
+        DatabaseConnection connection = super.getReadOnlyConnection(tableName);
         increaseConnectionCount();
         return wrap(connection);
     }
 
     @Override
-    public DatabaseConnection getReadWriteConnection() throws SQLException {
-        DatabaseConnection connection = super.getReadWriteConnection();
+    public DatabaseConnection getReadWriteConnection(String tableName) throws SQLException {
+        DatabaseConnection connection = super.getReadWriteConnection(tableName);
         increaseConnectionCount();
         return wrap(connection);
     }
 
     @Override
-    public DatabaseConnection getSpecialConnection() {
-        DatabaseConnection connection = super.getSpecialConnection();
+    public DatabaseConnection getSpecialConnection(String tableName) {
+        DatabaseConnection connection = super.getSpecialConnection(tableName);
         increaseConnectionCount();
         return wrap(connection);
     }

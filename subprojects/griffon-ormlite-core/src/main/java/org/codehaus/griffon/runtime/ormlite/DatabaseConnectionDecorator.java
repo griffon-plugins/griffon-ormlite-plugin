@@ -24,6 +24,7 @@ import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.support.GeneratedKeyHolder;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
@@ -46,91 +47,91 @@ public class DatabaseConnectionDecorator implements DatabaseConnection {
 
     @Override
     public boolean isAutoCommitSupported() throws SQLException {
-        return delegate.isAutoCommitSupported();
+        return getDelegate().isAutoCommitSupported();
     }
 
     @Override
     public boolean isAutoCommit() throws SQLException {
-        return delegate.isAutoCommit();
+        return getDelegate().isAutoCommit();
     }
 
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-        delegate.setAutoCommit(autoCommit);
+        getDelegate().setAutoCommit(autoCommit);
     }
 
     @Override
     public Savepoint setSavePoint(String savePointName) throws SQLException {
-        return delegate.setSavePoint(savePointName);
+        return getDelegate().setSavePoint(savePointName);
     }
 
     @Override
     public void commit(Savepoint savePoint) throws SQLException {
-        delegate.commit(savePoint);
+        getDelegate().commit(savePoint);
     }
 
     @Override
     public void rollback(Savepoint savePoint) throws SQLException {
-        delegate.rollback(savePoint);
+        getDelegate().rollback(savePoint);
     }
 
     @Override
     public int executeStatement(String statementStr, int resultFlags) throws SQLException {
-        return delegate.executeStatement(statementStr, resultFlags);
+        return getDelegate().executeStatement(statementStr, resultFlags);
     }
 
     @Override
-    public CompiledStatement compileStatement(String statement, StatementBuilder.StatementType type, FieldType[] argFieldTypes, int resultFlags) throws SQLException {
-        return delegate.compileStatement(statement, type, argFieldTypes, resultFlags);
+    public CompiledStatement compileStatement(String statement, StatementBuilder.StatementType type, FieldType[] argFieldTypes, int resultFlags, boolean cacheStore) throws SQLException {
+        return getDelegate().compileStatement(statement, type, argFieldTypes, resultFlags, cacheStore);
     }
 
     @Override
     public int insert(String statement, Object[] args, FieldType[] argfieldTypes, GeneratedKeyHolder keyHolder) throws SQLException {
-        return delegate.insert(statement, args, argfieldTypes, keyHolder);
+        return getDelegate().insert(statement, args, argfieldTypes, keyHolder);
     }
 
     @Override
     public int update(String statement, Object[] args, FieldType[] argfieldTypes) throws SQLException {
-        return delegate.update(statement, args, argfieldTypes);
+        return getDelegate().update(statement, args, argfieldTypes);
     }
 
     @Override
     public int delete(String statement, Object[] args, FieldType[] argfieldTypes) throws SQLException {
-        return delegate.delete(statement, args, argfieldTypes);
+        return getDelegate().delete(statement, args, argfieldTypes);
     }
 
     @Override
     public <T> Object queryForOne(String statement, Object[] args, FieldType[] argfieldTypes, GenericRowMapper<T> rowMapper, ObjectCache objectCache) throws SQLException {
-        return delegate.queryForOne(statement, args, argfieldTypes, rowMapper, objectCache);
+        return getDelegate().queryForOne(statement, args, argfieldTypes, rowMapper, objectCache);
     }
 
     @Override
     public long queryForLong(String statement) throws SQLException {
-        return delegate.queryForLong(statement);
+        return getDelegate().queryForLong(statement);
     }
 
     @Override
     public long queryForLong(String statement, Object[] args, FieldType[] argFieldTypes) throws SQLException {
-        return delegate.queryForLong(statement, args, argFieldTypes);
-    }
-
-    @Override
-    public void close() throws SQLException {
-        delegate.close();
+        return getDelegate().queryForLong(statement, args, argFieldTypes);
     }
 
     @Override
     public void closeQuietly() {
-        delegate.closeQuietly();
+        getDelegate().closeQuietly();
     }
 
     @Override
     public boolean isClosed() throws SQLException {
-        return delegate.isClosed();
+        return getDelegate().isClosed();
     }
 
     @Override
     public boolean isTableExists(String tableName) throws SQLException {
-        return delegate.isTableExists(tableName);
+        return getDelegate().isTableExists(tableName);
+    }
+
+    @Override
+    public void close() throws IOException {
+        getDelegate().close();
     }
 }

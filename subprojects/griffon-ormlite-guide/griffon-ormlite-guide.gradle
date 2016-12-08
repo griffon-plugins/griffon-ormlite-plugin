@@ -147,7 +147,8 @@ asciidoctor {
         'project-url'          : project.projectWebsiteUrl,
         'project-vcs'          : project.projectVcsUrl,
         'project-issue-tracker': project.projectIssueTrackerUrl,
-        'griffon-version'      : rootProject.griffonVersion
+        'griffon-version'      : rootProject.griffonVersion,
+        'ormlite-version'      : project.ormliteVersion
     ]
     sources {
         include 'index.adoc'

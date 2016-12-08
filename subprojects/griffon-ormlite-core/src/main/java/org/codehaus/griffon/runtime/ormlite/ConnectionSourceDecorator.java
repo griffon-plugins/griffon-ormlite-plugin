@@ -20,6 +20,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.sql.SQLException;
 
 import static java.util.Objects.requireNonNull;
@@ -40,52 +41,57 @@ public class ConnectionSourceDecorator implements ConnectionSource {
     }
 
     @Override
-    public DatabaseConnection getReadOnlyConnection() throws SQLException {
-        return delegate.getReadOnlyConnection();
+    public DatabaseConnection getReadOnlyConnection(String tableName) throws SQLException {
+        return getDelegate().getReadOnlyConnection(tableName);
     }
 
     @Override
-    public DatabaseConnection getReadWriteConnection() throws SQLException {
-        return delegate.getReadWriteConnection();
+    public DatabaseConnection getReadWriteConnection(String tableName) throws SQLException {
+        return getDelegate().getReadWriteConnection(tableName);
     }
 
     @Override
     public void releaseConnection(DatabaseConnection connection) throws SQLException {
-        delegate.releaseConnection(connection);
+        getDelegate().releaseConnection(connection);
     }
 
     @Override
     public boolean saveSpecialConnection(DatabaseConnection connection) throws SQLException {
-        return delegate.saveSpecialConnection(connection);
+        return getDelegate().saveSpecialConnection(connection);
     }
 
     @Override
     public void clearSpecialConnection(DatabaseConnection connection) {
-        delegate.clearSpecialConnection(connection);
+        getDelegate().clearSpecialConnection(connection);
     }
 
     @Override
-    public DatabaseConnection getSpecialConnection() {
-        return delegate.getSpecialConnection();
-    }
-
-    @Override
-    public void close() throws SQLException {
-        delegate.close();
+    public DatabaseConnection getSpecialConnection(String tableName) {
+        return getDelegate().getSpecialConnection(tableName);
     }
 
     @Override
     public void closeQuietly() {
-        delegate.closeQuietly();
+        getDelegate().closeQuietly();
     }
 
     @Override
     public DatabaseType getDatabaseType() {
-        return delegate.getDatabaseType();
+        return getDelegate().getDatabaseType();
     }
 
     @Override
-    public boolean isOpen() {
-        return delegate.isOpen();
+    public boolean isOpen(String tableName) {
+        return getDelegate().isOpen(tableName);
+    }
+
+    @Override
+    public boolean isSingleConnection(String tableName) {
+        return getDelegate().isSingleConnection(tableName);
+    }
+
+    @Override
+    public void close() throws IOException {
+        getDelegate().close();
     }
 }

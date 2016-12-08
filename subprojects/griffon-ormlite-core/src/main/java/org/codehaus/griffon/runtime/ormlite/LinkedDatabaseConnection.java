@@ -19,7 +19,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 
 import javax.annotation.Nonnull;
-import java.sql.SQLException;
+import java.io.IOException;
 
 /**
  * @author Andres Almiray
@@ -38,7 +38,7 @@ public class LinkedDatabaseConnection extends DatabaseConnectionDecorator {
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close() throws IOException {
         super.close();
         connectionSource.decreaseConnectionCount();
     }

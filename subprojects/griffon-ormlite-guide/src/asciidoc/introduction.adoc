@@ -7,3 +7,5 @@ This plugin does NOT provide domain classes nor dynamic finders like GORM does.
 
 Griffon version: {griffon-version}
 
+Ormlite version: {ormlite-version}
+
