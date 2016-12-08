@@ -30,7 +30,7 @@ LinkedDatabaseConnection.java
    <td nowrap="nowrap" valign="top" align="left">
     <code>
 <a name="1"><font color="#808080">01</font>&nbsp;</a><font color="#008000">/*</font><br />
-<a name="2"><font color="#808080">02</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Copyright&nbsp;2014-2015&nbsp;the&nbsp;original&nbsp;author&nbsp;or&nbsp;authors.</font><br />
+<a name="2"><font color="#808080">02</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Copyright&nbsp;2014-2016&nbsp;the&nbsp;original&nbsp;author&nbsp;or&nbsp;authors.</font><br />
 <a name="3"><font color="#808080">03</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*</font><br />
 <a name="4"><font color="#808080">04</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Licensed&nbsp;under&nbsp;the&nbsp;Apache&nbsp;License,&nbsp;Version&nbsp;2.0&nbsp;(the&nbsp;&#34;License&#34;);</font><br />
 <a name="5"><font color="#808080">05</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;you&nbsp;may&nbsp;not&nbsp;use&nbsp;this&nbsp;file&nbsp;except&nbsp;in&nbsp;compliance&nbsp;with&nbsp;the&nbsp;License.</font><br />
@@ -50,7 +50,7 @@ LinkedDatabaseConnection.java
 <a name="19"><font color="#808080">19</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">com.j256.ormlite.support.DatabaseConnection;</font><br />
 <a name="20"><font color="#808080">20</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="21"><font color="#808080">21</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">javax.annotation.Nonnull;</font><br />
-<a name="22"><font color="#808080">22</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">java.sql.SQLException;</font><br />
+<a name="22"><font color="#808080">22</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">java.io.IOException;</font><br />
 <a name="23"><font color="#808080">23</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="24"><font color="#808080">24</font>&nbsp;</a><font color="#008000">/**</font><br />
 <a name="25"><font color="#808080">25</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;</font><font color="#005500">@author&nbsp;</font><font color="#008000">Andres&nbsp;Almiray</font><br />
@@ -69,7 +69,7 @@ LinkedDatabaseConnection.java
 <a name="38"><font color="#808080">38</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
 <a name="39"><font color="#808080">39</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="40"><font color="#808080">40</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Override</font><br />
-<a name="41"><font color="#808080">41</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>public&nbsp;</b></font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">close</font><font color="#000000">()&nbsp;</font><font color="#0000c0"><b>throws&nbsp;</b></font><font color="#000000">SQLException&nbsp;</font><font color="#000000">{</font><br />
+<a name="41"><font color="#808080">41</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>public&nbsp;</b></font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">close</font><font color="#000000">()&nbsp;</font><font color="#0000c0"><b>throws&nbsp;</b></font><font color="#000000">IOException&nbsp;</font><font color="#000000">{</font><br />
 <a name="42"><font color="#808080">42</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>super</b></font><font color="#000000">.close</font><font color="#000000">()</font><font color="#000000">;</font><br />
 <a name="43"><font color="#808080">43</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">connectionSource.decreaseConnectionCount</font><font color="#000000">()</font><font color="#000000">;</font><br />
 <a name="44"><font color="#808080">44</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br />
