@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 the original author or authors.
+ * Copyright 2014-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.DaoManager
 import com.j256.ormlite.support.ConnectionSource
 import com.j256.ormlite.table.TableUtils
-import griffon.core.CallableWithArgs
 import griffon.core.GriffonApplication
+import griffon.core.RunnableWithArgs
 import griffon.core.test.GriffonUnitRule
 import griffon.inject.BindTo
 import griffon.plugins.ormlite.exceptions.RuntimeSQLException
@@ -55,7 +55,7 @@ class OrmliteSpec extends Specification {
         eventNames.each { name ->
             application.eventRouter.addEventListener(name, { Object... args ->
                 events << [name: name, args: args]
-            } as CallableWithArgs)
+            } as RunnableWithArgs)
         }
 
         when:
