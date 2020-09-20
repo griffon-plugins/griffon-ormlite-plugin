@@ -15,35 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package griffon.plugins.ormlite.exceptions;
+package griffon.plugins.ormlite.events;
 
 import griffon.annotations.core.Nonnull;
-import griffon.exceptions.GriffonException;
+import griffon.core.event.Event;
 
-import java.sql.SQLException;
+import java.util.Map;
 
 import static griffon.util.GriffonNameUtils.requireNonBlank;
 import static java.util.Objects.requireNonNull;
 
 /**
  * @author Andres Almiray
+ * @since 3.0.0
  */
-public class RuntimeSQLException extends GriffonException {
-    private final String databaseName;
+public class OrmliteDisconnectEndEvent extends Event {
+    private final String name;
+    private final Map<String, Object> config;
 
-    public RuntimeSQLException(@Nonnull String databaseName, @Nonnull SQLException sqle) {
-        super(format(databaseName), requireNonNull(sqle, "sqle"));
-        this.databaseName = databaseName;
+    public OrmliteDisconnectEndEvent(@Nonnull String name, @Nonnull Map<String, Object> config) {
+        this.name = requireNonBlank(name, "Argument 'name' must not be blank");
+        this.config = requireNonNull(config, "Argument 'config' must not be null");
     }
 
     @Nonnull
-    private static String format(@Nonnull String databaseName) {
-        requireNonBlank(databaseName, "databaseName");
-        return "An error occurred when executing a statement on database '" + databaseName + "'";
+    public String getName() {
+        return name;
     }
 
     @Nonnull
-    public String getDatabaseName() {
-        return databaseName;
+    public Map<String, Object> getConfig() {
+        return config;
+    }
+
+    @Nonnull
+    public static OrmliteDisconnectEndEvent of(@Nonnull String name, @Nonnull Map<String, Object> config) {
+        return new OrmliteDisconnectEndEvent(name, config);
     }
 }

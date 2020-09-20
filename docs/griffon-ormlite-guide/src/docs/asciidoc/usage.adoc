@@ -20,7 +20,7 @@ environment may connect to a different database.
 [source,groovy,options="nowrap"]
 .src/main/resources/Ormlite.groovy
 ----
-include::{path_griffon_ormlite_core}/src/test/resources/Ormlite.groovy[lines=16..37]
+include::{path_griffon_ormlite_core}/src/test/resources/Ormlite.groovy[lines=18..35]
 ----
 
 You may configure multiple named databases (the default factory is aptly named `default`) as the following snippet
@@ -29,18 +29,17 @@ shows
 [source,groovy,options="nowrap"]
 .src/main/resources/Ormlite.groovy
 ----
-include::{path_griffon_ormlite_core}/src/test/resources/Ormlite.groovy[lines=39..50]
+include::{path_griffon_ormlite_core}/src/test/resources/Ormlite.groovy[lines=37..-1]
 ----
 
 The following properties are optional
 
 [cols="4*",options="header"]
 |===
-
 | Property           | Type    | Default | Description
 | connect_on_startup | boolean | false   | Establishes a connection to the database at the beginning of the `Startup` phase.
 | jmx                | boolean | true    | Expose sessions using JMX.
-
+| pooled             | boolean | true    | Whether to use Hikari as connection pool or not.
 |===
 
 The plugin's <<_modules, module>> registers a `{api_connection_source_handler}` helper class that defines the base contract
@@ -62,7 +61,7 @@ with JDK8+ or closures if running Groovy.
 [source,java,options="nowrap"]
 .griffon.plugins.ormlite.ConnectionSourceCallback.java
 ----
-include::{path_griffon_ormlite_core}/src/main/java/griffon/plugins/ormlite/ConnectionSourceCallback.java[lines=26..-1]
+include::{path_griffon_ormlite_core}/src/main/java/griffon/plugins/ormlite/ConnectionSourceCallback.java[lines=28..-1]
 ----
 
 === Bootstrap
@@ -126,7 +125,6 @@ The following is a trivial usage of the `{api_connection_source_handler}` inside
 package com.acme;
 
 import griffon.core.artifact.GriffonService;
-import griffon.metadata.ArtifactProviderFor;
 import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonService;
 
 import griffon.plugins.ormlite.ConnectionSourceHandler;
@@ -135,11 +133,12 @@ import griffon.plugins.ormlite.exceptions.RuntimeSQLException;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import org.kordamp.jipsy.ServiceProviderFor;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
-@ArtifactProviderFor(GriffonService.class)
+@ServiceProviderFor(GriffonService.class)
 public class SampleService extends AbstractGriffonService {
     @Inject
     private ConnectionSourceHandler connectionSourceHandler;
@@ -164,16 +163,16 @@ Here's the Groovy version of it
 package com.acme
 
 import griffon.core.artifact.GriffonService
-import griffon.metadata.ArtifactProviderFor
 
 import griffon.plugins.ormlite.ConnectionSourceHandler
 import com.j256.ormlite.support.ConnectionSource
 import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.DaoManager
+import org.kordamp.jipsy.ServiceProviderFor
 
 import javax.inject.Inject
 
-@ArtifactProviderFor(GriffonService)
+@ServiceProviderFor(GriffonService)
 class SampleService {
     @Inject
     private ConnectionSourceHandler connectionSourceHandler
@@ -191,10 +190,10 @@ class SampleService {
 
 The following events will be triggered by `{api_connection_source_handler}`
 
-OrmliteConnectStart(String databaseName, Map<String, Object> config):: Triggered before connecting to the database.
-OrmliteConnectEnd(String databaseName, Map<String, Object> config, ConnectionSource connectionSource):: Triggered after connecting to the database.
-OrmliteDisconnectStart(String databaseName, Map<String, Object> config, ConnectionSource connectionSource):: Triggered before disconnecting from the database.
-OrmliteDisconnectEnd(String databaseName, Map<String, Object> config):: Triggered after disconnecting from the database.
+OrmliteConnectStartEvent(String databaseName, Map<String, Object> config):: Triggered before connecting to the database.
+OrmliteConnectEndEvent(String databaseName, Map<String, Object> config, ConnectionSource connectionSource):: Triggered after connecting to the database.
+OrmliteDisconnectStartEvent(String databaseName, Map<String, Object> config, ConnectionSource connectionSource):: Triggered before disconnecting from the database.
+OrmliteDisconnectEndEvent(String databaseName, Map<String, Object> config):: Triggered after disconnecting from the database.
 
 NOTE: DataSource events may be triggered during connection and disconnection from a `{link_connection_source}`.
 
@@ -209,15 +208,15 @@ into said class. The previous Groovy service example can be rewritten as follows
 package com.acme
 
 import griffon.core.artifact.GriffonService
-import griffon.metadata.ArtifactProviderFor
 import griffon.transform.ConnectionSourceAware
 
 import com.j256.ormlite.support.ConnectionSource
 import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.DaoManager
+import org.kordamp.jipsy.ServiceProviderFor
 
 @ConnectionSourceAware
-@ArtifactProviderFor(GriffonService)
+@ServiceProviderFor(GriffonService)
 class SampleService {
     String getPersonName(int id) {
          withConnectionSource { String databaseName, ConnectionSource connectionSource ->

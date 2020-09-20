@@ -24,7 +24,7 @@ import org.codehaus.groovy.ast.expr.MethodCallExpression
 
 supportsVersion(groovyEclipse: '2.5.1')
 
-contribute(enclosingClass(annotatedBy('griffon.transform.ConnectionSourceAware'))) {
+contribute(enclosingClass(annotatedBy('griffon.transform.ormlite.ConnectionSourceAware'))) {
     provider = 'griffon-ormlite'
     delegatesTo 'griffon.plugins.ormlite.ConnectionSourceHandler'
 }

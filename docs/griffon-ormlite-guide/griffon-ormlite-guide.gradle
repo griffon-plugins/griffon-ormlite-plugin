@@ -15,25 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package griffon.plugins.ormlite
+ext.projectDependencies = [
+    ':griffon-ormlite-core',
+    ':griffon-ormlite-groovy-compile'
+]
 
-import com.j256.ormlite.field.DatabaseField
-import com.j256.ormlite.table.DatabaseTable
-
-@DatabaseTable(tableName = 'people')
-class Person {
-    @DatabaseField(id = true)
-    int id
-    @DatabaseField
-    String name
-    @DatabaseField
-    String lastname
-
-    Map asMap() {
-        [
-            id      : id,
-            name    : name,
-            lastname: lastname
-        ]
-    }
-}
+ext.projectDependencies.each { evaluationDependsOn it }

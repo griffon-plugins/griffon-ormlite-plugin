@@ -1,11 +1,13 @@
 /*
- * Copyright 2014-2017 the original author or authors.
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2014-2020 The author and/or original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,15 +21,23 @@ import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.DaoManager
 import com.j256.ormlite.support.ConnectionSource
 import com.j256.ormlite.table.TableUtils
+import griffon.annotations.inject.BindTo
 import griffon.core.GriffonApplication
-import griffon.core.RunnableWithArgs
-import griffon.core.test.GriffonUnitRule
-import griffon.inject.BindTo
+import griffon.plugins.datasource.events.DataSourceConnectEndEvent
+import griffon.plugins.datasource.events.DataSourceConnectStartEvent
+import griffon.plugins.datasource.events.DataSourceDisconnectEndEvent
+import griffon.plugins.datasource.events.DataSourceDisconnectStartEvent
+import griffon.plugins.ormlite.events.OrmliteConnectEndEvent
+import griffon.plugins.ormlite.events.OrmliteConnectStartEvent
+import griffon.plugins.ormlite.events.OrmliteDisconnectEndEvent
+import griffon.plugins.ormlite.events.OrmliteDisconnectStartEvent
 import griffon.plugins.ormlite.exceptions.RuntimeSQLException
+import griffon.test.core.GriffonUnitRule
 import org.junit.Rule
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import javax.application.event.EventHandler
 import javax.inject.Inject
 
 @Unroll
@@ -48,15 +58,13 @@ class OrmliteSpec extends Specification {
     void 'Open and close default connectionSource'() {
         given:
         List eventNames = [
-            'OrmliteConnectStart', 'OrmliteConnectEnd',
-            'OrmliteDisconnectStart', 'OrmliteDisconnectEnd'
+            'OrmliteConnectStartEvent', 'DataSourceConnectStartEvent',
+            'DataSourceConnectEndEvent', 'OrmliteConnectEndEvent',
+            'OrmliteDisconnectStartEvent', 'DataSourceDisconnectStartEvent',
+            'DataSourceDisconnectEndEvent', 'OrmliteDisconnectEndEvent'
         ]
-        List events = []
-        eventNames.each { name ->
-            application.eventRouter.addEventListener(name, { Object... args ->
-                events << [name: name, args: args]
-            } as RunnableWithArgs)
-        }
+        TestEventHandler testEventHandler = new TestEventHandler()
+        application.eventRouter.subscribe(testEventHandler)
 
         when:
         connectionSourceHandler.withConnectionSource { String databaseName, ConnectionSource connectionSource ->
@@ -67,8 +75,8 @@ class OrmliteSpec extends Specification {
         connectionSourceHandler.closeConnectionSource()
 
         then:
-        events.size() == 4
-        events.name == eventNames
+        testEventHandler.events.size() == 8
+        testEventHandler.events == eventNames
     }
 
     void 'Connect to default connectionSource'() {
@@ -172,4 +180,49 @@ class OrmliteSpec extends Specification {
 
     @BindTo(OrmliteBootstrap)
     private TestOrmliteBootstrap bootstrap = new TestOrmliteBootstrap()
+
+
+    private class TestEventHandler {
+        List<String> events = []
+
+        @EventHandler
+        void handleDataSourceConnectStartEvent(DataSourceConnectStartEvent event) {
+            events << event.class.simpleName
+        }
+
+        @EventHandler
+        void handleDataSourceConnectEndEvent(DataSourceConnectEndEvent event) {
+            events << event.class.simpleName
+        }
+
+        @EventHandler
+        void handleDataSourceDisconnectStartEvent(DataSourceDisconnectStartEvent event) {
+            events << event.class.simpleName
+        }
+
+        @EventHandler
+        void handleDataSourceDisconnectEndEvent(DataSourceDisconnectEndEvent event) {
+            events << event.class.simpleName
+        }
+
+        @EventHandler
+        void handleOrmliteConnectStartEvent(OrmliteConnectStartEvent event) {
+            events << event.class.simpleName
+        }
+
+        @EventHandler
+        void handleOrmliteConnectEndEvent(OrmliteConnectEndEvent event) {
+            events << event.class.simpleName
+        }
+
+        @EventHandler
+        void handleOrmliteDisconnectStartEvent(OrmliteDisconnectStartEvent event) {
+            events << event.class.simpleName
+        }
+
+        @EventHandler
+        void handleOrmliteDisconnectEndEvent(OrmliteDisconnectEndEvent event) {
+            events << event.class.simpleName
+        }
+    }
 }
