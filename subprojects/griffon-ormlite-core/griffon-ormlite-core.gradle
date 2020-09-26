@@ -23,9 +23,3 @@ dependencies {
 
     testRuntimeOnly "com.h2database:h2:$h2Version"
 }
-
-jar {
-    manifest {
-        attributes('Automatic-Module-Name': project.group + '.ormlite.core')
-    }
-}
