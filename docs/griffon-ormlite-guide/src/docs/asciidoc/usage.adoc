@@ -102,7 +102,7 @@ package com.acme;
 import griffon.plugins.ormlite.OrmliteBootstrap;
 import griffon.core.injection.Module;
 import org.codehaus.griffon.runtime.core.injection.AbstractModule;
-import org.kordamp.jipsy.ServiceProviderFor;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 @ServiceProviderFor(Module.class)
 public class ApplicationModule extends AbstractModule {
@@ -133,7 +133,7 @@ import griffon.plugins.ormlite.exceptions.RuntimeSQLException;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import org.kordamp.jipsy.ServiceProviderFor;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -168,7 +168,7 @@ import griffon.plugins.ormlite.ConnectionSourceHandler
 import com.j256.ormlite.support.ConnectionSource
 import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.DaoManager
-import org.kordamp.jipsy.ServiceProviderFor
+import org.kordamp.jipsy.annotations.ServiceProviderFor
 
 import javax.inject.Inject
 
@@ -213,7 +213,7 @@ import griffon.transform.ConnectionSourceAware
 import com.j256.ormlite.support.ConnectionSource
 import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.DaoManager
-import org.kordamp.jipsy.ServiceProviderFor
+import org.kordamp.jipsy.annotations.ServiceProviderFor
 
 @ConnectionSourceAware
 @ServiceProviderFor(GriffonService)
